@@ -32,10 +32,11 @@ class Account:
         return self.balance
 
 
+# Tests
 def main():
     dmitriy = Account("Dmitriy", 1000)
     try:
-        dmitriy.withdraw(-0.5)
+        dmitriy.withdraw(2000)
     except ValueError as err:
         print(f"Значение суммы должно быть больше 0 а у вас: {err}!")
     except InsufficientFunds as err:
