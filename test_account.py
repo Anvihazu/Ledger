@@ -70,7 +70,7 @@ def test_valid_transfer(human, human_2):
 def test_transfer_to_None(human):
     none_human = None
     assert human.balance == 500
-    with pytest.raises(account.TransferToNone):
+    with pytest.raises(account.InvalidReceiver):
         human.transfer(300, none_human)
     assert human.balance == 500
 
@@ -94,3 +94,22 @@ def test_negative_transfer(human, human_2):
         human.transfer(-500, human_2)
     assert human.balance == 500
     assert human_2.balance == 300
+
+
+def test_self_transfer(human):
+    with pytest.raises(account.SelfTransfer):
+        human.transfer(100, human)
+    assert human.balance == 500
+
+
+def test_string_transfer(human, human_2):
+    with pytest.raises(account.InvalidReceiver):
+        human.transfer(100, "human_2")
+    assert human.balance == 500
+    assert human_2.balance == 300
+
+
+def test_number_transfer(human):
+    with pytest.raises(account.InvalidReceiver):
+        human.transfer(100, 2)
+    assert human.balance == 500

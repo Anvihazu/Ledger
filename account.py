@@ -16,9 +16,11 @@ def withdraw_verification(amount, balance):
         return amount
 
 
-def transfer_to_none(person):
-    if person == None:
-        raise TransferToNone
+def receiver_verification(person, person_2):
+    if not isinstance(person_2, Account):
+        raise InvalidReceiver(person_2)
+    elif person is person_2:
+        raise SelfTransfer
 
 
 class InsufficientFunds(Exception):
@@ -29,7 +31,11 @@ class FloatNumber(Exception):
     pass
 
 
-class TransferToNone(Exception):
+class InvalidReceiver(Exception):
+    pass
+
+
+class SelfTransfer(Exception):
     pass
 
 
@@ -38,20 +44,24 @@ class Account:
         self.owner = owner
         self.balance = balance
 
+
     def deposit(self, amount: int):
         amount_verification(amount)
         self.balance += amount
         return self.balance
+
 
     def withdraw(self, amount: int):
         amount_verification(amount)
         withdraw_verification(amount, self.balance)
         self.balance -= amount
         return self.balance
+
+
     def transfer(self, amount: int, person):
         amount_verification(amount)
         withdraw_verification(amount, self.balance)
-        transfer_to_none(person)
+        receiver_verification(self, person)
         self.balance -= amount
         person.balance += amount
 
@@ -71,8 +81,10 @@ def main():
         print(f"{err} - является строкой!")
     except FloatNumber:
         print("Сумма должна быть целым числом!")
-    except TransferToNone:
-        print("Нельзя переводить никому")
+    except InvalidReceiver as err:
+        print(f"{err} - не корректный получатель!")
+    except SelfTransfer:
+        print("Нельзя перевести самому себе")
     print(f"Баланс Дмитрия после: {dmitriy.balance}.")
     print(f"Баланс Олега после: {oleg.balance}.")
 
