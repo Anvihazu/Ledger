@@ -20,6 +20,8 @@ class BoolAmount(Exception):
 
 class NoneAmount(Exception):
     pass
+
+
 class Account:
     def __init__(self, owner, balance: int = 0):
         self.owner = owner
@@ -80,28 +82,28 @@ def receiver_verification(person, person_2):
 def main():
     dmitriy = Account("Dmitriy", 1000)
     oleg = Account("Oleg", 500)
-    print(f"Баланс Дмитрия до: {dmitriy.balance}.")
-    print(f"Баланс Олега до: {oleg.balance}.")
+    print(f"Dmitriy's balance before: {dmitriy.balance}.")
+    print(f"Oleg's balance before: {oleg.balance}.")
     try:
         dmitriy.transfer(200, None)
     except ValueError as err:
-        print(f"Значение суммы должно быть больше 0 а у вас: {err}!")
+        print(f"Invalid amount! Value must be greater than 0, but you provided: {err}!")
     except InsufficientFunds as err:
-        print(f"{err} - недостаточно для снятия!")
+        print(f"Operation failed! {err} is insufficient for withdrawal.")
     except TypeError as err:
-        print(f"{err} - является строкой!")
+        print(f"Type error! '{err}' is a string.")
     except FloatAmount:
-        print("Сумма должна быть целым числом!")
+        print("Amount error! The sum must be an integer.")
     except InvalidReceiver as err:
-        print(f"{err} - не корректный получатель!")
+        print(f"Receiver error! '{err}' is not a valid account.")
     except BoolAmount:
-        print("Булевые значения нельзя использовать!")
+        print("Amount error! Boolean values are not allowed!")
     except NoneAmount:
-        print("None нельзя использовать!")
+        print("Amount error! None value cannot be used as an amount!")
     except SelfTransfer:
-        print("Нельзя перевести самому себе")
-    print(f"Баланс Дмитрия после: {dmitriy.balance}.")
-    print(f"Баланс Олега после: {oleg.balance}.")
+        print("Transfer rejected! You cannot transfer funds to yourself.")
+    print(f"Dmitriy's balance after: {dmitriy.balance}.")
+    print(f"Oleg's balance after: {oleg.balance}.")
 
 
 if __name__ == "__main__":
