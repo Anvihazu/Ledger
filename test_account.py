@@ -19,6 +19,7 @@ def balance_sum(human, human_2):
     return balance_sum
 
 
+# Deposit
 def test_deposit_valid_amount(human):
     assert human.deposit(200) == 700
 
@@ -35,6 +36,25 @@ def test_deposit_negative_number(human):
     assert human.balance == 500
 
 
+def test_bool_deposit(human):
+    with pytest.raises(account.BoolAmount):
+        human.deposit(True)
+    assert human.balance == 500
+
+
+def test_none_deposit(human):
+    with pytest.raises(account.NoneAmount):
+        human.deposit(None)
+    assert human.balance == 500
+
+
+def test_float_deposit(human):
+    with pytest.raises(account.FloatAmount):
+        human.deposit(10.5)
+    assert human.balance == 500
+
+
+# Withdraw
 def test_withdraw_valid_amount(human):
     assert human.withdraw(500) == 0
 
@@ -57,6 +77,25 @@ def test_withdraw_more_than_balance(human):
     assert human.balance == 500
 
 
+def test_bool_withdraw(human):
+    with pytest.raises(account.BoolAmount):
+        human.withdraw(True)
+    assert human.balance == 500
+
+
+def test_none_withdraw(human):
+    with pytest.raises(account.NoneAmount):
+        human.withdraw(None)
+    assert human.balance == 500
+
+
+def test_float_withdraw(human):
+    with pytest.raises(account.FloatAmount):
+        human.withdraw(10.5)
+    assert human.balance == 500
+
+
+# Transfer
 def test_valid_transfer(human, human_2):
     assert human.balance == 500
     assert human_2.balance == 300
@@ -113,3 +152,24 @@ def test_number_transfer(human):
     with pytest.raises(account.InvalidReceiver):
         human.transfer(100, 2)
     assert human.balance == 500
+
+
+def test_bool_transfer(human, human_2):
+    with pytest.raises(account.BoolAmount):
+        human.transfer(True, human_2)
+    assert human.balance == 500
+    assert human_2.balance == 300
+
+
+def test_none_transfer(human, human_2):
+    with pytest.raises(account.NoneAmount):
+        human.transfer(None, human_2)
+    assert human.balance == 500
+    assert human_2.balance == 300
+
+
+def test_float_transfer(human, human_2):
+    with pytest.raises(account.FloatAmount):
+        human.transfer(10.5, human_2)
+    assert human.balance == 500
+    assert human_2.balance == 300

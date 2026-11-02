@@ -1,33 +1,8 @@
-def amount_verification(amount):
-    if isinstance(amount, str):
-        raise TypeError(amount)
-    elif amount <= 0:
-        raise ValueError(amount)
-    elif isinstance(amount, float):
-        raise FloatNumber
-    else:
-        return amount
-
-
-def withdraw_verification(amount, balance):
-    if amount > balance:
-        raise InsufficientFunds(amount)
-    else:
-        return amount
-
-
-def receiver_verification(person, person_2):
-    if not isinstance(person_2, Account):
-        raise InvalidReceiver(person_2)
-    elif person is person_2:
-        raise SelfTransfer
-
-
 class InsufficientFunds(Exception):
     pass
 
 
-class FloatNumber(Exception):
+class FloatAmount(Exception):
     pass
 
 
@@ -39,6 +14,12 @@ class SelfTransfer(Exception):
     pass
 
 
+class BoolAmount(Exception):
+    pass
+
+
+class NoneAmount(Exception):
+    pass
 class Account:
     def __init__(self, owner, balance: int = 0):
         self.owner = owner
@@ -65,6 +46,36 @@ class Account:
         self.balance -= amount
         person.balance += amount
 
+
+def amount_verification(amount):
+    if isinstance(amount, str):
+        raise TypeError(amount)
+    elif amount is None:
+        raise NoneAmount
+    elif amount <= 0:
+        raise ValueError(amount)
+    elif isinstance(amount, float):
+        raise FloatAmount
+    elif isinstance(amount, bool):
+        raise BoolAmount
+    else:
+        return amount
+
+
+def withdraw_verification(amount, balance):
+    if amount > balance:
+        raise InsufficientFunds(amount)
+    else:
+        return amount
+
+
+def receiver_verification(person, person_2):
+    if not isinstance(person_2, Account):
+        raise InvalidReceiver(person_2)
+    elif person is person_2:
+        raise SelfTransfer
+
+
 # Example:
 def main():
     dmitriy = Account("Dmitriy", 1000)
@@ -79,10 +90,14 @@ def main():
         print(f"{err} - недостаточно для снятия!")
     except TypeError as err:
         print(f"{err} - является строкой!")
-    except FloatNumber:
+    except FloatAmount:
         print("Сумма должна быть целым числом!")
     except InvalidReceiver as err:
         print(f"{err} - не корректный получатель!")
+    except BoolAmount:
+        print("Булевые значения нельзя использовать!")
+    except NoneAmount:
+        print("None нельзя использовать!")
     except SelfTransfer:
         print("Нельзя перевести самому себе")
     print(f"Баланс Дмитрия после: {dmitriy.balance}.")
