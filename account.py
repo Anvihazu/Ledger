@@ -26,11 +26,17 @@ class Account:
     def __init__(self, owner, balance: int = 0):
         self.owner = owner
         self.balance = balance
+        self.history = []
+    
+
+    def __str__(self):
+        return self.owner
 
 
     def deposit(self, amount: int):
         amount_verification(amount)
         self.balance += amount
+        self.history.append(f"Deposited {amount}.")
         return self.balance
 
 
@@ -38,15 +44,18 @@ class Account:
         amount_verification(amount)
         withdraw_verification(amount, self.balance)
         self.balance -= amount
+        self.history.append(f"Withdrawn {amount}.")
         return self.balance
 
 
     def transfer(self, amount: int, person):
         amount_verification(amount)
-        withdraw_verification(amount, self.balance)
         receiver_verification(self, person)
+        withdraw_verification(amount, self.balance)
         self.balance -= amount
+        self.history.append(f"Transferred {amount} to {person}.")
         person.balance += amount
+        person.history.append(f"Received {amount} from {self}.")
 
 
 def amount_verification(amount):
@@ -54,12 +63,12 @@ def amount_verification(amount):
         raise TypeError(amount)
     elif amount is None:
         raise NoneAmount
+    elif isinstance(amount, bool):
+        raise BoolAmount
     elif amount <= 0:
         raise ValueError(amount)
     elif isinstance(amount, float):
         raise FloatAmount
-    elif isinstance(amount, bool):
-        raise BoolAmount
     else:
         return amount
 
@@ -84,8 +93,10 @@ def main():
     oleg = Account("Oleg", 500)
     print(f"Dmitriy's balance before: {dmitriy.balance}.")
     print(f"Oleg's balance before: {oleg.balance}.")
+    print(f"Dmitriy's history before: {dmitriy.history}.")
+    print(f"Oleg's history before: {oleg.history}.")
     try:
-        dmitriy.transfer(200, None)
+        dmitriy.transfer(555, oleg)
     except ValueError as err:
         print(f"Invalid amount! Value must be greater than 0, but you provided: {err}!")
     except InsufficientFunds as err:
@@ -104,7 +115,8 @@ def main():
         print("Transfer rejected! You cannot transfer funds to yourself.")
     print(f"Dmitriy's balance after: {dmitriy.balance}.")
     print(f"Oleg's balance after: {oleg.balance}.")
-
+    print(f"Dmitriy's history after: {dmitriy.history}.")
+    print(f"Oleg's history after: {oleg.history}.")
 
 if __name__ == "__main__":
     main()

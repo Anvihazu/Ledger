@@ -36,7 +36,13 @@ def test_deposit_negative_number(human):
     assert human.balance == 500
 
 
-def test_bool_deposit(human):
+def test_false_deposit(human):
+    with pytest.raises(account.BoolAmount):
+        human.deposit(False)
+    assert human.balance == 500
+
+
+def test_true_deposit(human):
     with pytest.raises(account.BoolAmount):
         human.deposit(True)
     assert human.balance == 500
@@ -52,6 +58,18 @@ def test_float_deposit(human):
     with pytest.raises(account.FloatAmount):
         human.deposit(10.5)
     assert human.balance == 500
+
+
+def test_deposit_successful_history(human):
+    assert human.deposit(200) == 700
+    assert len(human.history) == 1
+
+
+def test_deposit_fail_history(human):
+    with pytest.raises(ValueError):
+        human.deposit(0)
+    assert human.balance == 500
+    assert len(human.history) == 0
 
 
 # Withdraw
@@ -77,7 +95,13 @@ def test_withdraw_more_than_balance(human):
     assert human.balance == 500
 
 
-def test_bool_withdraw(human):
+def test_false_withdraw(human):
+    with pytest.raises(account.BoolAmount):
+        human.withdraw(False)
+    assert human.balance == 500
+
+
+def test_true_withdraw(human):
     with pytest.raises(account.BoolAmount):
         human.withdraw(True)
     assert human.balance == 500
@@ -93,6 +117,18 @@ def test_float_withdraw(human):
     with pytest.raises(account.FloatAmount):
         human.withdraw(10.5)
     assert human.balance == 500
+
+
+def test_withdraw_successful_history(human):
+    assert human.withdraw(300) == 200
+    assert len(human.history) == 1
+
+
+def test_withdraw_fail_history(human):
+    with pytest.raises(account.FloatAmount):
+        human.withdraw(10.5)
+    assert human.balance == 500
+    assert len(human.history) == 0
 
 
 # Transfer
@@ -154,7 +190,14 @@ def test_number_transfer(human):
     assert human.balance == 500
 
 
-def test_bool_transfer(human, human_2):
+def test_false_transfer(human, human_2):
+    with pytest.raises(account.BoolAmount):
+        human.transfer(False, human_2)
+    assert human.balance == 500
+    assert human_2.balance == 300
+
+
+def test_true_transfer(human, human_2):
     with pytest.raises(account.BoolAmount):
         human.transfer(True, human_2)
     assert human.balance == 500
@@ -173,3 +216,31 @@ def test_float_transfer(human, human_2):
         human.transfer(10.5, human_2)
     assert human.balance == 500
     assert human_2.balance == 300
+
+
+def test_transfer_successful_history(human, human_2):
+    assert human.balance == 500
+    assert human_2.balance == 300
+    assert balance_sum(human, human_2) == 800
+    human.transfer(500, human_2)
+    assert human.balance == 0
+    assert human_2.balance == 800
+    assert balance_sum(human, human_2) == 800
+    assert len(human.history) == 1
+    assert len(human_2.history) == 1
+
+def test_transfer_fail_history(human, human_2):
+    with pytest.raises(account.NoneAmount):
+        human.transfer(None, human_2)
+    assert human.balance == 500
+    assert human_2.balance == 300
+    assert len(human.history) == 0
+    assert len(human_2.history) == 0
+
+
+def test_transfer_overbalance_to_None(human):
+    none_human = None
+    assert human.balance == 500
+    with pytest.raises(account.InvalidReceiver):
+        human.transfer(1000, none_human)
+    assert human.balance == 500
