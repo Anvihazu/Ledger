@@ -88,7 +88,7 @@ def receiver_verification(person, person_2):
 
 
 # Example:
-def main():
+def main(): # pragma: no cover
     dmitriy = Account("Dmitriy", 1000)
     oleg = Account("Oleg", 500)
     print(f"Dmitriy's balance before: {dmitriy.balance}.")
@@ -119,4 +119,4 @@ def main():
     print(f"Oleg's history after: {oleg.history}.")
 
 if __name__ == "__main__":
-    main()
+    main() # pragma: no cover

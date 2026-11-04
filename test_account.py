@@ -25,7 +25,8 @@ def balance_sum(human, human_2):
                                                          (False, account.BoolAmount),
                                                          (True, account.BoolAmount),
                                                          (None, account.NoneAmount),
-                                                         (10.5, account.FloatAmount)])
+                                                         (10.5, account.FloatAmount),
+                                                         ("10", TypeError)])
 def test_deposit_invalid_amount(human, deposit_amount, expected_err):
     with pytest.raises(expected_err):
         human.deposit(deposit_amount)
@@ -45,7 +46,8 @@ def test_deposit_valid_amount(human):
                                                           (True, account.BoolAmount),
                                                           (None, account.NoneAmount),
                                                           (10.5, account.FloatAmount),
-                                                          (1000, account.InsufficientFunds)])
+                                                          (1000, account.InsufficientFunds),
+                                                          ("10", TypeError)])
 def test_withdraw_invalid_amount(human, withdraw_amount, expected_err):
     with pytest.raises(expected_err):
         human.withdraw(withdraw_amount)
@@ -65,7 +67,8 @@ def test_withdraw_valid_amount(human):
                                                           (True, account.BoolAmount),
                                                           (None, account.NoneAmount),
                                                           (10.5, account.FloatAmount),
-                                                          (1000, account.InsufficientFunds)])
+                                                          (1000, account.InsufficientFunds),
+                                                          ("10", TypeError)])
 def test_invalid_transfer(human, human_2, transfer_amount, expected_err):
     with pytest.raises(expected_err):
         human.transfer(transfer_amount, human_2)
