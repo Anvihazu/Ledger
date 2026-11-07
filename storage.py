@@ -20,13 +20,13 @@ def save_accounts(accounts, path):
     serialized_accounts = []
     for acc in accounts:
         serialized_accounts.append(account_to_dict(acc))
-    with open (path, 'w') as storage:
-        json.dump(serialized_accounts, storage, ensure_ascii=False, indent=2)
+    with open(path, 'w', encoding="utf-8") as file:
+        json.dump(serialized_accounts, file, ensure_ascii=False, indent=2)
 
 
 def load_accounts(path):
     accounts = []
-    with open(path, 'r') as data_file:
+    with open(path, 'r', encoding="utf-8") as data_file:
         data = json.load(data_file)
         for acc in data:
             accounts.append(account_from_dict(acc))
