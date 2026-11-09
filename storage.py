@@ -1,5 +1,6 @@
 import json
 from account import Account
+import os
 
 
 def account_to_dict(acc):
@@ -20,8 +21,9 @@ def save_accounts(accounts, path):
     serialized_accounts = []
     for acc in accounts:
         serialized_accounts.append(account_to_dict(acc))
-    with open(path, 'w', encoding="utf-8") as file:
+    with open(f"{path}.tmp", 'w', encoding="utf-8") as file:
         json.dump(serialized_accounts, file, ensure_ascii=False, indent=2)
+    os.replace(f"{path}.tmp", path)
 
 
 def load_accounts(path):

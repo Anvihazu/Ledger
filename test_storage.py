@@ -27,3 +27,13 @@ def test_save_load_accounts(tmp_path, human, human_2):
     assert load_result[1].owner == human_2.owner
     assert load_result[1].balance == human_2.balance
     assert load_result[1].history == human_2.history
+
+
+def test_save_leaves_no_temp_file(tmp_path, human, human_2):
+    file_path = tmp_path / "accounts.json"
+    accounts = [human, human_2]
+    storage.save_accounts(accounts, file_path)
+    names = []
+    for p in tmp_path.iterdir():
+        names.append(p.name)
+    assert names == ["accounts.json"]
