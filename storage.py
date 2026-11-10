@@ -3,6 +3,25 @@ from account import Account
 import os
 
 
+
+class CorruptedStorage(Exception):
+    pass
+
+
+def account_validation(acc):
+    try:
+        if type(acc["owner"]) != str:
+            raise CorruptedStorage
+        if type(acc["balance"]) != int:
+            raise CorruptedStorage
+        if type(acc["history"]) != list:
+            raise CorruptedStorage
+        if not all(type(i) == str for i in acc["history"]):
+            raise CorruptedStorage
+    except(KeyError):
+        raise CorruptedStorage
+
+
 def account_to_dict(acc):
     return {
         "owner": acc.owner,
@@ -27,9 +46,15 @@ def save_accounts(accounts, path):
 
 
 def load_accounts(path):
+    if not os.path.exists(path):
+        return []
     accounts = []
-    with open(path, 'r', encoding="utf-8") as data_file:
-        data = json.load(data_file)
-        for acc in data:
-            accounts.append(account_from_dict(acc))
-    return accounts
+    try:
+        with open(path, 'r', encoding="utf-8") as data_file:
+            data = json.load(data_file)
+            for acc in data:
+                account_validation(acc)
+                accounts.append(account_from_dict(acc))
+        return accounts
+    except json.JSONDecodeError:
+        raise CorruptedStorage
