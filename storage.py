@@ -18,7 +18,7 @@ def account_validation(acc):
             raise CorruptedStorage
         if not all(type(i) == str for i in acc["history"]):
             raise CorruptedStorage
-    except(KeyError):
+    except(KeyError, TypeError):
         raise CorruptedStorage
 
 
