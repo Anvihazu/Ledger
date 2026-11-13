@@ -42,9 +42,14 @@ def save_accounts(accounts, path):
     serialized_accounts = []
     for acc in accounts:
         serialized_accounts.append(account_to_dict(acc))
-    with open(f"{path}.tmp", 'w', encoding="utf-8") as file:
-        json.dump(serialized_accounts, file, ensure_ascii=False, indent=2)
-    os.replace(f"{path}.tmp", path)
+    try:
+        with open(f"{path}.tmp", 'w', encoding="utf-8") as file:
+            json.dump(serialized_accounts, file, ensure_ascii=False, indent=2)
+        os.replace(f"{path}.tmp", path)
+    except Exception:
+        if os.path.exists(f"{path}.tmp"):
+            os.remove(f"{path}.tmp")
+        raise
 
 
 def load_accounts(path):

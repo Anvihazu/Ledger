@@ -84,3 +84,22 @@ def test_unicode_err(tmp_path):
         corrupted_file.write(b"\xff\xfe")
     with pytest.raises(storage.CorruptedStorage):
         storage.load_accounts(file_path)
+
+
+def test_real_time_err(tmp_path, monkeypatch, human, human_2):
+    file_path = tmp_path / "accounts.json"
+    def fake_os_err(*args, **kwargs):
+        raise OSError
+    storage.save_accounts([human], file_path)
+    monkeypatch.setattr(storage.json, "dump", fake_os_err)
+    with pytest.raises(OSError):
+        storage.save_accounts([human_2], file_path)
+    load_result = storage.load_accounts(file_path)
+    assert len(load_result) == 1
+    assert load_result[0].owner == human.owner
+    assert load_result[0].balance == human.balance
+    assert load_result[0].history == human.history
+    names = []
+    for p in tmp_path.iterdir():
+        names.append(p.name)
+    assert names == ["accounts.json"]
