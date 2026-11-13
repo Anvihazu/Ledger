@@ -14,6 +14,8 @@ def account_validation(acc):
             raise CorruptedStorage
         if type(acc["balance"]) != int:
             raise CorruptedStorage
+        if acc["balance"] < 0:
+            raise CorruptedStorage
         if type(acc["history"]) != list:
             raise CorruptedStorage
         if not all(type(i) == str for i in acc["history"]):
@@ -52,9 +54,11 @@ def load_accounts(path):
     try:
         with open(path, 'r', encoding="utf-8") as data_file:
             data = json.load(data_file)
+            if type(data) != list:
+                raise CorruptedStorage
             for acc in data:
                 account_validation(acc)
                 accounts.append(account_from_dict(acc))
         return accounts
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, UnicodeDecodeError):
         raise CorruptedStorage

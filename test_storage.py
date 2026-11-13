@@ -61,7 +61,10 @@ def test_corrupted_json(tmp_path):
                                         [{"owner": "Oleg", "balance": True, "history": []}],
                                         [{"owner": "Oleg", "balance": 10.5, "history": []}],
                                         [{"owner": "Oleg", "balance": 500, "history": {}}],
-                                        [{"owner": "Oleg", "balance": 500, "history": [200]}]])
+                                        [{"owner": "Oleg", "balance": 500, "history": [200]}],
+                                         5,
+                                         None,
+                                        [{"owner": "Oleg","balance": -100,"history": []}]])
 
 
 def test_invalid_load_accounts(tmp_path, broken_acc):
@@ -73,3 +76,11 @@ def test_invalid_load_accounts(tmp_path, broken_acc):
     with open(file_path, 'r', encoding="utf-8") as corrupted_file:
         check_file = json.load(corrupted_file)
     assert check_file == broken_acc
+
+
+def test_unicode_err(tmp_path):
+    file_path = tmp_path / "accounts.json"
+    with open(file_path, 'wb') as corrupted_file:
+        corrupted_file.write(b"\xff\xfe")
+    with pytest.raises(storage.CorruptedStorage):
+        storage.load_accounts(file_path)
