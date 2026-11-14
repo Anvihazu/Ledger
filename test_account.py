@@ -20,6 +20,11 @@ def balance_sum(human, human_2):
     return balance_sum
 
 
+# Other
+def test_invalid_opening_amount():
+    with pytest.raises(ValueError):
+        invalid_human = account.Account("Name", -100)
+
 # Deposit
 @pytest.mark.parametrize("deposit_amount,expected_err", [(0, ValueError),
                                                          (-500, ValueError),

@@ -27,6 +27,8 @@ class Account:
         self.owner = owner
         self.balance = balance
         self.history = []
+        if balance < 0:
+            raise ValueError
     
 
     def __str__(self):
