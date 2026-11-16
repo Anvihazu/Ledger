@@ -47,4 +47,4 @@ def main(argv = None, path = "accounts.json"):
 
 
 if __name__ == "__main__":
-    main()
+    main() # pragma: no cover
