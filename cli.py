@@ -23,6 +23,8 @@ ERROR_MESSAGES = {
     ValueError: "Amount or balance must be positive.",
     storage.CorruptedStorage: "Storage file is corrupted.",
 }
+
+
 def find_account(accounts, owner):
     for acc in accounts:
         if acc.owner == owner:

@@ -46,7 +46,7 @@ class Account:
         amount_verification(amount)
         withdraw_verification(amount, self.balance)
         self.balance -= amount
-        self.history.append(f"Withdrawn {amount}.")
+        self.history.append(f"Withdrew {amount}.")
         return self.balance
 
 
