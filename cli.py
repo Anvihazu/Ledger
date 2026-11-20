@@ -10,6 +10,8 @@ from account import (
     SelfTransfer,
 )
 import sys
+from typing import Any
+from pathlib import Path
 
 
 ERROR_MESSAGES = {
@@ -25,14 +27,14 @@ ERROR_MESSAGES = {
 }
 
 
-def find_account(accounts, owner):
+def find_account(accounts: list[Account], owner: str) -> Account | None:
     for acc in accounts:
         if acc.owner == owner:
             return acc
     return None
 
 
-def get_account(accounts, owner):
+def get_account(accounts: list[Account], owner: str) -> Account:
     for acc in accounts:
         if acc.owner == owner:
             return acc
@@ -40,7 +42,7 @@ def get_account(accounts, owner):
     sys.exit(1)
 
 
-def build_parser():
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description = "Bank CLI")
     subparsers = parser.add_subparsers(dest = "command", required = True)
     create_parser = subparsers.add_parser("create", help = "Create new account")
@@ -63,7 +65,7 @@ def build_parser():
     return parser
 
 
-def main(argv = None, path = "accounts.json"):
+def main(argv: list[str] | None = None, path: Path | str = "accounts.json") -> None:
     parser = build_parser()
     args = parser.parse_args(argv)
     accounts = storage.load_accounts(path)

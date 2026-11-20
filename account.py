@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class InsufficientFunds(Exception):
     pass
 
@@ -23,26 +26,26 @@ class NoneAmount(Exception):
 
 
 class Account:
-    def __init__(self, owner, balance: int = 0):
+    def __init__(self, owner: str, balance: int = 0) -> None:
         self.owner = owner
         self.balance = balance
-        self.history = []
+        self.history: list[str] = []
         if balance < 0:
             raise ValueError
     
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.owner
 
 
-    def deposit(self, amount: int):
+    def deposit(self, amount: int) -> int:
         amount_verification(amount)
         self.balance += amount
         self.history.append(f"Deposited {amount}.")
         return self.balance
 
 
-    def withdraw(self, amount: int):
+    def withdraw(self, amount: int) -> int:
         amount_verification(amount)
         withdraw_verification(amount, self.balance)
         self.balance -= amount
@@ -50,7 +53,7 @@ class Account:
         return self.balance
 
 
-    def transfer(self, amount: int, person):
+    def transfer(self, amount: int, person: "Account") -> None:
         amount_verification(amount)
         receiver_verification(self, person)
         withdraw_verification(amount, self.balance)
@@ -60,7 +63,7 @@ class Account:
         person.history.append(f"Received {amount} from {self}.")
 
 
-def amount_verification(amount):
+def amount_verification(amount: Any) -> int:
     if isinstance(amount, str):
         raise TypeError(amount)
     elif amount is None:
@@ -75,14 +78,14 @@ def amount_verification(amount):
         return amount
 
 
-def withdraw_verification(amount, balance):
+def withdraw_verification(amount: int, balance: int) -> int:
     if amount > balance:
         raise InsufficientFunds(amount)
     else:
         return amount
 
 
-def receiver_verification(person, person_2):
+def receiver_verification(person: "Account", person_2: Any) -> None:
     if not isinstance(person_2, Account):
         raise InvalidReceiver(person_2)
     elif person is person_2:
@@ -90,7 +93,7 @@ def receiver_verification(person, person_2):
 
 
 # Example:
-def main(): # pragma: no cover
+def main() -> None: # pragma: no cover
     dmitriy = Account("Dmitriy", 1000)
     oleg = Account("Oleg", 500)
     print(f"Dmitriy's balance before: {dmitriy.balance}.")

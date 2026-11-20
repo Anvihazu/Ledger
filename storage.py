@@ -1,14 +1,15 @@
 import json
 from account import Account
 import os
-
+from typing import Any
+from pathlib import Path
 
 
 class CorruptedStorage(Exception):
     pass
 
 
-def account_validation(acc):
+def account_validation(acc: Any) -> None:
     try:
         if type(acc["owner"]) != str:
             raise CorruptedStorage
@@ -24,7 +25,7 @@ def account_validation(acc):
         raise CorruptedStorage
 
 
-def account_to_dict(acc):
+def account_to_dict(acc: Account) -> dict[str, Any]:
     return {
         "owner": acc.owner,
         "balance": acc.balance,
@@ -32,13 +33,13 @@ def account_to_dict(acc):
         }
 
 
-def account_from_dict(data):
+def account_from_dict(data: dict[str, Any]) -> Account:
     acc = Account(data["owner"], data["balance"])
     acc.history = data["history"]
     return acc
 
 
-def save_accounts(accounts, path):
+def save_accounts(accounts: list[Account], path: Path | str) -> None:
     serialized_accounts = []
     for acc in accounts:
         serialized_accounts.append(account_to_dict(acc))
@@ -52,7 +53,7 @@ def save_accounts(accounts, path):
         raise
 
 
-def load_accounts(path):
+def load_accounts(path: Path | str) -> list[Account]:
     if not os.path.exists(path):
         return []
     accounts = []
