@@ -88,7 +88,9 @@ def main(argv: list[str] | None = None, path: Path | str = "accounts.json") -> N
             acc = get_account(accounts, args.owner)
             acc.deposit(args.amount)
             storage.save_accounts(accounts, path)
-            print(f"Deposited {args.amount} to {acc.owner}. New balance: {acc.balance}")
+            print(
+                f"Deposited {args.amount} to {acc.owner}. New balance: {acc.balance}."
+            )
         elif args.command == "withdraw":
             acc = get_account(accounts, args.owner)
             acc.withdraw(args.amount)
