@@ -32,11 +32,9 @@ class Account:
         self.history: list[str] = []
         if balance < 0:
             raise ValueError
-    
 
     def __str__(self) -> str:
         return self.owner
-
 
     def deposit(self, amount: int) -> int:
         amount_verification(amount)
@@ -44,14 +42,12 @@ class Account:
         self.history.append(f"Deposited {amount}.")
         return self.balance
 
-
     def withdraw(self, amount: int) -> int:
         amount_verification(amount)
         withdraw_verification(amount, self.balance)
         self.balance -= amount
         self.history.append(f"Withdrew {amount}.")
         return self.balance
-
 
     def transfer(self, amount: int, person: "Account") -> None:
         amount_verification(amount)
@@ -93,7 +89,7 @@ def receiver_verification(person: "Account", person_2: Any) -> None:
 
 
 # Example:
-def main() -> None: # pragma: no cover
+def main() -> None:  # pragma: no cover
     dmitriy = Account("Dmitriy", 1000)
     oleg = Account("Oleg", 500)
     print(f"Dmitriy's balance before: {dmitriy.balance}.")
@@ -123,5 +119,6 @@ def main() -> None: # pragma: no cover
     print(f"Dmitriy's history after: {dmitriy.history}.")
     print(f"Oleg's history after: {oleg.history}.")
 
+
 if __name__ == "__main__":
-    main() # pragma: no cover
+    main()  # pragma: no cover

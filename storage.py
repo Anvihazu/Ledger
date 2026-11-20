@@ -1,8 +1,9 @@
 import json
-from account import Account
 import os
-from typing import Any
 from pathlib import Path
+from typing import Any
+
+from account import Account
 
 
 class CorruptedStorage(Exception):
@@ -21,16 +22,12 @@ def account_validation(acc: Any) -> None:
             raise CorruptedStorage
         if not all(type(i) == str for i in acc["history"]):
             raise CorruptedStorage
-    except(KeyError, TypeError):
+    except (KeyError, TypeError):
         raise CorruptedStorage
 
 
 def account_to_dict(acc: Account) -> dict[str, Any]:
-    return {
-        "owner": acc.owner,
-        "balance": acc.balance,
-        "history": acc.history
-        }
+    return {"owner": acc.owner, "balance": acc.balance, "history": acc.history}
 
 
 def account_from_dict(data: dict[str, Any]) -> Account:
@@ -44,7 +41,7 @@ def save_accounts(accounts: list[Account], path: Path | str) -> None:
     for acc in accounts:
         serialized_accounts.append(account_to_dict(acc))
     try:
-        with open(f"{path}.tmp", 'w', encoding="utf-8") as file:
+        with open(f"{path}.tmp", "w", encoding="utf-8") as file:
             json.dump(serialized_accounts, file, ensure_ascii=False, indent=2)
         os.replace(f"{path}.tmp", path)
     except Exception:
@@ -58,7 +55,7 @@ def load_accounts(path: Path | str) -> list[Account]:
         return []
     accounts = []
     try:
-        with open(path, 'r', encoding="utf-8") as data_file:
+        with open(path, "r", encoding="utf-8") as data_file:
             data = json.load(data_file)
             if type(data) != list:
                 raise CorruptedStorage

@@ -1,4 +1,5 @@
 import pytest
+
 import cli
 import storage
 from account import Account
@@ -12,8 +13,8 @@ def file_path(tmp_path):
 @pytest.fixture
 def accounts_file(file_path):
     accounts = [
-            Account("Ann", 500),
-            Account("Bob", 300),
+        Account("Ann", 500),
+        Account("Bob", 300),
     ]
     storage.save_accounts(accounts, file_path)
     return file_path
@@ -27,23 +28,26 @@ def existing_account(file_path, capsys):
 
 
 # other
-@pytest.mark.parametrize("argv, expected_err", [(["deposit", "Ann", "0"], "positive"),
-                                                (["deposit", "Ann", "-50"], "positive"),
-                                                (["deposit", "Ghost", "200"], "not found"),
-                                                (["withdraw", "Ann", "0"], "positive"),
-                                                (["withdraw", "Ann", "-50"], "positive"),
-                                                (["withdraw", "Ann", "1000"], "Insufficient"),
-                                                (["withdraw", "Ghost", "200"], "not found"),
-                                                (["transfer", "Ann", "Bob", "0"], "positive"),
-                                                (["transfer", "Ann", "Bob","-50"], "positive"),
-                                                (["transfer", "Ann", "Bob", "1000"], "Insufficient"),
-                                                (["transfer", "Ghost", "Bob", "200"], "not found"),
-                                                (["transfer", "Ann", "Ann", "300"], "yourself"),
-                                                (["transfer", "Ann", "Ghost", "200"], "not found"),
-                                                (["history", "Ghost"], "not found"),
-                                                (["balance", "Ghost"], "not found"),
-                                                ]
-                         )
+@pytest.mark.parametrize(
+    "argv, expected_err",
+    [
+        (["deposit", "Ann", "0"], "positive"),
+        (["deposit", "Ann", "-50"], "positive"),
+        (["deposit", "Ghost", "200"], "not found"),
+        (["withdraw", "Ann", "0"], "positive"),
+        (["withdraw", "Ann", "-50"], "positive"),
+        (["withdraw", "Ann", "1000"], "Insufficient"),
+        (["withdraw", "Ghost", "200"], "not found"),
+        (["transfer", "Ann", "Bob", "0"], "positive"),
+        (["transfer", "Ann", "Bob", "-50"], "positive"),
+        (["transfer", "Ann", "Bob", "1000"], "Insufficient"),
+        (["transfer", "Ghost", "Bob", "200"], "not found"),
+        (["transfer", "Ann", "Ann", "300"], "yourself"),
+        (["transfer", "Ann", "Ghost", "200"], "not found"),
+        (["history", "Ghost"], "not found"),
+        (["balance", "Ghost"], "not found"),
+    ],
+)
 def test_invalid_cli_operations(argv, expected_err, capsys, accounts_file):
     before_test = accounts_file.read_text(encoding="utf-8")
     with pytest.raises(SystemExit) as excinfo:
@@ -52,14 +56,17 @@ def test_invalid_cli_operations(argv, expected_err, capsys, accounts_file):
     captured_info = capsys.readouterr()
     assert expected_err in captured_info.err
     assert accounts_file.read_text(encoding="utf-8") == before_test
-    
 
-@pytest.mark.parametrize("argv", [[],
-                                  ["deposit", "Ann", "xyz"],
-                                  ["withdraw", "Ann", "10.5"],
-                                  ["transfer", "Ann", "Bob", "abc"],
-                                  ]
-                         )
+
+@pytest.mark.parametrize(
+    "argv",
+    [
+        [],
+        ["deposit", "Ann", "xyz"],
+        ["withdraw", "Ann", "10.5"],
+        ["transfer", "Ann", "Bob", "abc"],
+    ],
+)
 def test_argparse_errors(accounts_file, argv):
     with pytest.raises(SystemExit) as excinfo:
         cli.main(argv, path=accounts_file)

@@ -1,7 +1,9 @@
+import json
+
 import pytest
+
 import account
 import storage
-import json
 
 
 @pytest.fixture
@@ -47,40 +49,43 @@ def test_load_no_file_return_list(tmp_path):
 
 def test_corrupted_json(tmp_path):
     file_path = tmp_path / "accounts.json"
-    with open(file_path, 'w') as corrupted_file:
+    with open(file_path, "w") as corrupted_file:
         corrupted_file.write("{not json")
     with pytest.raises(storage.CorruptedStorage):
         storage.load_accounts(file_path)
 
 
-@pytest.mark.parametrize("broken_acc",  [{"owner": "Oleg","balance": 500,"history": []},
-                                        [{"owner": "Oleg", "balance": 500}],
-                                        [1, 2 , 3],
-                                        [{"owner": 200, "balance": 500, "history": []}],
-                                        [{"owner": "Oleg", "balance": "500", "history": []}],
-                                        [{"owner": "Oleg", "balance": True, "history": []}],
-                                        [{"owner": "Oleg", "balance": 10.5, "history": []}],
-                                        [{"owner": "Oleg", "balance": 500, "history": {}}],
-                                        [{"owner": "Oleg", "balance": 500, "history": [200]}],
-                                         5,
-                                         None,
-                                        [{"owner": "Oleg","balance": -100,"history": []}]])
-
-
+@pytest.mark.parametrize(
+    "broken_acc",
+    [
+        {"owner": "Oleg", "balance": 500, "history": []},
+        [{"owner": "Oleg", "balance": 500}],
+        [1, 2, 3],
+        [{"owner": 200, "balance": 500, "history": []}],
+        [{"owner": "Oleg", "balance": "500", "history": []}],
+        [{"owner": "Oleg", "balance": True, "history": []}],
+        [{"owner": "Oleg", "balance": 10.5, "history": []}],
+        [{"owner": "Oleg", "balance": 500, "history": {}}],
+        [{"owner": "Oleg", "balance": 500, "history": [200]}],
+        5,
+        None,
+        [{"owner": "Oleg", "balance": -100, "history": []}],
+    ],
+)
 def test_invalid_load_accounts(tmp_path, broken_acc):
     file_path = tmp_path / "accounts.json"
-    with open(file_path, 'w', encoding="utf-8") as corrupted_file:
+    with open(file_path, "w", encoding="utf-8") as corrupted_file:
         json.dump(broken_acc, corrupted_file, ensure_ascii=False, indent=2)
     with pytest.raises(storage.CorruptedStorage):
         storage.load_accounts(file_path)
-    with open(file_path, 'r', encoding="utf-8") as corrupted_file:
+    with open(file_path, "r", encoding="utf-8") as corrupted_file:
         check_file = json.load(corrupted_file)
     assert check_file == broken_acc
 
 
 def test_unicode_err(tmp_path):
     file_path = tmp_path / "accounts.json"
-    with open(file_path, 'wb') as corrupted_file:
+    with open(file_path, "wb") as corrupted_file:
         corrupted_file.write(b"\xff\xfe")
     with pytest.raises(storage.CorruptedStorage):
         storage.load_accounts(file_path)
@@ -88,8 +93,10 @@ def test_unicode_err(tmp_path):
 
 def test_real_time_err(tmp_path, monkeypatch, human, human_2):
     file_path = tmp_path / "accounts.json"
+
     def fake_os_err(*args, **kwargs):
         raise OSError
+
     storage.save_accounts([human], file_path)
     monkeypatch.setattr(storage.json, "dump", fake_os_err)
     with pytest.raises(OSError):

@@ -1,6 +1,8 @@
-import account
-import pytest
 import random
+
+import pytest
+
+import account
 
 
 @pytest.fixture
@@ -23,16 +25,22 @@ def balance_sum(human, human_2):
 # Other
 def test_invalid_opening_amount():
     with pytest.raises(ValueError):
-        invalid_human = account.Account("Name", -100)
+        account.Account("Name", -100)
+
 
 # Deposit
-@pytest.mark.parametrize("deposit_amount,expected_err", [(0, ValueError),
-                                                         (-500, ValueError),
-                                                         (False, account.BoolAmount),
-                                                         (True, account.BoolAmount),
-                                                         (None, account.NoneAmount),
-                                                         (10.5, account.FloatAmount),
-                                                         ("10", TypeError)])
+@pytest.mark.parametrize(
+    "deposit_amount,expected_err",
+    [
+        (0, ValueError),
+        (-500, ValueError),
+        (False, account.BoolAmount),
+        (True, account.BoolAmount),
+        (None, account.NoneAmount),
+        (10.5, account.FloatAmount),
+        ("10", TypeError),
+    ],
+)
 def test_deposit_invalid_amount(human, deposit_amount, expected_err):
     with pytest.raises(expected_err):
         human.deposit(deposit_amount)
@@ -46,14 +54,19 @@ def test_deposit_valid_amount(human):
 
 
 # Withdraw
-@pytest.mark.parametrize("withdraw_amount,expected_err", [(0, ValueError),
-                                                          (-500, ValueError),
-                                                          (False, account.BoolAmount),
-                                                          (True, account.BoolAmount),
-                                                          (None, account.NoneAmount),
-                                                          (10.5, account.FloatAmount),
-                                                          (1000, account.InsufficientFunds),
-                                                          ("10", TypeError)])
+@pytest.mark.parametrize(
+    "withdraw_amount,expected_err",
+    [
+        (0, ValueError),
+        (-500, ValueError),
+        (False, account.BoolAmount),
+        (True, account.BoolAmount),
+        (None, account.NoneAmount),
+        (10.5, account.FloatAmount),
+        (1000, account.InsufficientFunds),
+        ("10", TypeError),
+    ],
+)
 def test_withdraw_invalid_amount(human, withdraw_amount, expected_err):
     with pytest.raises(expected_err):
         human.withdraw(withdraw_amount)
@@ -67,14 +80,19 @@ def test_withdraw_valid_amount(human):
 
 
 # Transfer
-@pytest.mark.parametrize("transfer_amount,expected_err", [(0, ValueError),
-                                                          (-500, ValueError),
-                                                          (False, account.BoolAmount),
-                                                          (True, account.BoolAmount),
-                                                          (None, account.NoneAmount),
-                                                          (10.5, account.FloatAmount),
-                                                          (1000, account.InsufficientFunds),
-                                                          ("10", TypeError)])
+@pytest.mark.parametrize(
+    "transfer_amount,expected_err",
+    [
+        (0, ValueError),
+        (-500, ValueError),
+        (False, account.BoolAmount),
+        (True, account.BoolAmount),
+        (None, account.NoneAmount),
+        (10.5, account.FloatAmount),
+        (1000, account.InsufficientFunds),
+        ("10", TypeError),
+    ],
+)
 def test_invalid_transfer(human, human_2, transfer_amount, expected_err):
     with pytest.raises(expected_err):
         human.transfer(transfer_amount, human_2)
@@ -131,6 +149,7 @@ def test_transfer_overbalance_to_None(human):
         human.transfer(1000, none_human)
     assert human.balance == 500
 
+
 def test_transfer_full_balance(human, human_2):
     assert human.balance == 500
     assert human_2.balance == 300
@@ -162,7 +181,10 @@ def test_random_transfers_keep_total():
         balance_sum = account_1.balance + account_2.balance + account_3.balance
         assert balance_sum == 1000
     assert successful_transfers > 0
-    assert len(account_1.history + account_2.history + account_3.history) == successful_transfers * 2
+    assert (
+        len(account_1.history + account_2.history + account_3.history)
+        == successful_transfers * 2
+    )
     assert account_1.balance >= 0
     assert account_2.balance >= 0
     assert account_3.balance >= 0
