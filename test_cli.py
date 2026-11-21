@@ -73,6 +73,16 @@ def test_argparse_errors(accounts_file, argv):
     assert excinfo.value.code == 2
 
 
+def test_corrupted_json(file_path, capsys):
+    with open(file_path, "w") as corrupted_file:
+        corrupted_file.write("{not json")
+    with pytest.raises(SystemExit) as excinfo:
+        cli.main(["balance", "Ann"], path=file_path)
+    assert excinfo.value.code == 1
+    captured_info = capsys.readouterr()
+    assert "corrupted" in captured_info.err
+
+
 # tests for create
 def test_valid_create_and_balance_(file_path, capsys):
     cli.main(["create", "Oleg", "--balance", "500"], path=file_path)

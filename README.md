@@ -11,7 +11,7 @@ A command-line application written in Python for managing simple bank accounts: 
 1. Clone the repository and navigate into the project directory:
    ```bash
    git clone https://github.com/Anvihazu/Ledger.git
-   cd ledger
+   cd Ledger
    ```
 
 2. Create and activate a virtual environment:

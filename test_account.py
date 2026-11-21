@@ -23,9 +23,29 @@ def balance_sum(human, human_2):
 
 
 # Other
-def test_invalid_opening_amount():
+@pytest.mark.parametrize(
+    "invalid_amount,expected_err",
+    [
+        (True, account.BoolAmount),
+        (False, account.BoolAmount),
+        (None, account.NoneAmount),
+        (10.5, account.FloatAmount),
+        ("10", TypeError),
+    ],
+)
+def test_invalid_opening_amount(invalid_amount, expected_err):
+    with pytest.raises(expected_err):
+        account.Account("Name", invalid_amount)
+
+
+def test_negative_opening_amount():
     with pytest.raises(ValueError):
         account.Account("Name", -100)
+
+
+def test_0_opening_amount():
+    assert (account.Account("Name", 0)).balance == 0
+    assert len(account.Account("Name", 0).history) == 0
 
 
 # Deposit

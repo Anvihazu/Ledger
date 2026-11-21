@@ -69,8 +69,8 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None, path: Path | str = "accounts.json") -> None:
     parser = build_parser()
     args = parser.parse_args(argv)
-    accounts = storage.load_accounts(path)
     try:
+        accounts = storage.load_accounts(path)
         if args.command == "create":
             if find_account(accounts, args.owner) is not None:
                 print(

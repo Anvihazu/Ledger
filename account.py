@@ -30,6 +30,7 @@ class Account:
         self.owner = owner
         self.balance = balance
         self.history: list[str] = []
+        type_verification_for_amount(balance)
         if balance < 0:
             raise ValueError
 
@@ -59,17 +60,23 @@ class Account:
         person.history.append(f"Received {amount} from {self}.")
 
 
-def amount_verification(amount: Any) -> int:
+def type_verification_for_amount(amount: Any) -> int:
     if isinstance(amount, str):
         raise TypeError(amount)
     elif amount is None:
         raise NoneAmount
     elif isinstance(amount, bool):
         raise BoolAmount
-    elif amount <= 0:
-        raise ValueError(amount)
     elif isinstance(amount, float):
         raise FloatAmount
+    else:
+        return amount
+
+
+def amount_verification(amount: Any) -> int:
+    type_verification_for_amount(amount)
+    if amount <= 0:
+        raise ValueError(amount)
     else:
         return amount
 
